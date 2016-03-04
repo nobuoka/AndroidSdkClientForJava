@@ -23,7 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-class ConsoleProxyProcessUserAgent implements ProcessIoHandler {
+public class ConsoleProxyProcessIoHandler implements ProcessIoHandler {
 
     public static class Factory implements ProcessIoHandler.Factory {
         @Override
@@ -31,7 +31,7 @@ class ConsoleProxyProcessUserAgent implements ProcessIoHandler {
             InputStream procStdOutput = process.getInputStream();
             InputStream procErrOutput = process.getErrorStream();
             OutputStream procInput = process.getOutputStream();
-            return new ConsoleProxyProcessUserAgent(procStdOutput, procErrOutput, procInput);
+            return new ConsoleProxyProcessIoHandler(procStdOutput, procErrOutput, procInput);
         }
     }
 
@@ -78,7 +78,7 @@ class ConsoleProxyProcessUserAgent implements ProcessIoHandler {
     final InputStream mProcErrOutput;
     final OutputStream mProcInput;
 
-    ConsoleProxyProcessUserAgent(InputStream procStdOutput, InputStream procErrOutput, OutputStream input) {
+    ConsoleProxyProcessIoHandler(InputStream procStdOutput, InputStream procErrOutput, OutputStream input) {
         mProcStdOutput = procStdOutput;
         mProcErrOutput = procErrOutput;
         mProcInput = input;

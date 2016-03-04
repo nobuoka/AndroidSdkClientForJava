@@ -21,7 +21,7 @@ import java.io.IOException;
 /**
  * Class which is read output of process and respond to it if necessary.
  */
-interface ProcessIoHandler extends AutoCloseable {
+public interface ProcessIoHandler extends AutoCloseable {
 
     /**
      * Start to handle input and output of Process.
