@@ -29,6 +29,7 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -155,16 +156,21 @@ public class EmulatorCommandExecutor {
     }
 
     public Avd startAvd(String name) throws InterruptedException, IOException {
+        return startAvd(name, Arrays.asList("-no-window", "-no-boot-anim"));
+    }
+
+    public Avd startAvd(String name, List<String> options) throws InterruptedException, IOException {
         try (AvdConsolePortReceiver avdConsolePortReceiver = AvdConsolePortReceiver.create()) {
             int receivingLocalPort = avdConsolePortReceiver.getLocalPortSync();
-            String[] cmd = { mExecFilePath, "-avd", name,
-                    "-report-console", "tcp:" + Integer.toString(receivingLocalPort, 10),
-                    "-no-window", "-no-boot-anim" };
+            ArrayList<String> cmdList = new ArrayList<>();
+            cmdList.addAll(Arrays.asList(mExecFilePath, "-avd", name,
+                    "-report-console", "tcp:" + Integer.toString(receivingLocalPort, 10)));
+            cmdList.addAll(options);
             // C:\Users\nobuoka\.android-sdk\tools\emulator.exe -avd test1 -report-console tcp:8001
             final Process createAvdProc;
             try {
                 // TODO : エラー出力を出すようにする？
-                createAvdProc = executeCommand(cmd);
+                createAvdProc = executeCommand(cmdList.toArray(new String[cmdList.size()]));
                 // TODO : IO の扱い何とかする必要がありそう。
                 // Linux ではエミュレータが動いている間はこのプロセスが動き続けるので終了を待たない。
                 /*
