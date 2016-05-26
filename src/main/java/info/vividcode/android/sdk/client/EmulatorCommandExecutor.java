@@ -159,6 +159,42 @@ public class EmulatorCommandExecutor {
         return startAvd(name, Arrays.asList("-no-window", "-no-boot-anim"));
     }
 
+    public Avd startAvdWithConsolePort(String name, int port, List<String> options) throws InterruptedException, IOException {
+        if (!checkPortIsAvailable(port)) {
+            throw new RuntimeException("Specified port " + port + " is in use.");
+        }
+
+        ArrayList<String> cmdList = new ArrayList<>();
+        cmdList.addAll(Arrays.asList(mExecFilePath, "-avd", name, "-port", "5554"));
+        cmdList.addAll(options);
+        final Process createAvdProc;
+        try {
+            // TODO : エラー出力を出すようにする？
+            createAvdProc = executeCommand(cmdList.toArray(new String[cmdList.size()]));
+            // TODO : IO の扱い何とかする必要がありそう。
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        long startTime = System.currentTimeMillis();
+        while (!checkPortIsAvailable(port)) {
+            long elapsedTimeInMs = System.currentTimeMillis() - startTime;
+            if (elapsedTimeInMs < 5000) {
+                System.out.println("Waiting for AVD console");
+                Thread.sleep(100);
+            } else {
+                // TODO : kill process and read error output.
+                throw new RuntimeException("Timeout! AVD console is not available");
+            }
+        }
+        Avd avd = Avd.create(port);
+        avd.readConsoleOutput(10, TimeUnit.SECONDS);
+            /*
+            avd.sendCommand("avd status");
+            System.out.println(avd.readConsoleOutput(2, TimeUnit.SECONDS));
+            */
+        return avd;
+    }
+
     public Avd startAvd(String name, List<String> options) throws InterruptedException, IOException {
         try (AvdConsolePortReceiver avdConsolePortReceiver = AvdConsolePortReceiver.create()) {
             int receivingLocalPort = avdConsolePortReceiver.getLocalPortSync();
@@ -193,6 +229,14 @@ public class EmulatorCommandExecutor {
             System.out.println(avd.readConsoleOutput(2, TimeUnit.SECONDS));
             */
             return avd;
+        }
+    }
+
+    private static boolean checkPortIsAvailable(int port) {
+        try (Socket ignored = new Socket("localhost", port)) {
+            return false;
+        } catch (IOException ignored) {
+            return true;
         }
     }
 

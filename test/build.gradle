@@ -1,6 +1,13 @@
 buildscript {
+    repositories {
+        maven {
+            url('https://dl.bintray.com/nobuoka/maven/')
+        }
+        // If you want to use developed version, use Maven local repository.
+        //mavenLocal()
+    }
     dependencies {
-        classpath files('./AndroidSdkClientForJava.jar')
+        classpath "info.vividcode.android:android-sdk-client:0.5.0"
     }
 }
 

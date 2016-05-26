@@ -3,6 +3,7 @@ package info.vividcode.android.sdk.client.demo;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -41,7 +42,7 @@ public class Main {
         }
 
         // AVD 起動。
-        try (Avd avd = emulatorCmd.startAvd(targetAvdName)) {
+        try (Avd avd = emulatorCmd.startAvdWithConsolePort(targetAvdName, 5554, Collections.<String>emptyList())) {
             // AVD のコンソールポートといろいろやり取りできる状態。
             System.out.println("AVD started");
 
