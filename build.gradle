@@ -9,7 +9,7 @@ buildscript {
 
 apply plugin: 'java'
 
-String libraryVersionStr = '0.5.0'
+String libraryVersionStr = ext.libraryVersionStr = '0.5.0'
 
 allprojects {
     tasks.withType(JavaCompile) {

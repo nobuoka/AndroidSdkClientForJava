@@ -1,6 +1,9 @@
 buildscript {
+    repositories {
+        mavenLocal()
+    }
     dependencies {
-        classpath files('./AndroidSdkClientForJava.jar')
+        classpath "info.vividcode.android:android-sdk-client:${parent.ext.libraryVersionStr}"
     }
 }
 
