@@ -165,7 +165,7 @@ public class EmulatorCommandExecutor {
         }
 
         ArrayList<String> cmdList = new ArrayList<>();
-        cmdList.addAll(Arrays.asList(mExecFilePath, "-avd", name, "-port", "5554"));
+        cmdList.addAll(Arrays.asList(mExecFilePath, "-avd", name, "-port", Integer.toString(port)));
         cmdList.addAll(options);
         final Process createAvdProc;
         try {
