@@ -176,17 +176,21 @@ public class EmulatorCommandExecutor {
             throw new RuntimeException(e);
         }
         long startTime = System.currentTimeMillis();
-        while (!checkPortIsAvailable(port)) {
-            long elapsedTimeInMs = System.currentTimeMillis() - startTime;
-            if (elapsedTimeInMs < 5000) {
-                System.out.println("Waiting for AVD console");
-                Thread.sleep(100);
-            } else {
-                // TODO : kill process and read error output.
-                throw new RuntimeException("Timeout! AVD console is not available");
+        Avd avd;
+        while (true) {
+            try {
+                avd = Avd.create(port);
+                break;
+            } catch (IOException ex) {
+                long elapsedTimeInMs = System.currentTimeMillis() - startTime;
+                if (elapsedTimeInMs > 5000) {
+                    // TODO : kill process and read error output.
+                    throw new RuntimeException("Timeout! AVD console is not available");
+                }
             }
+            System.out.println("Waiting for AVD console");
+            Thread.sleep(100);
         }
-        Avd avd = Avd.create(port);
         avd.readConsoleOutput(10, TimeUnit.SECONDS);
             /*
             avd.sendCommand("avd status");
